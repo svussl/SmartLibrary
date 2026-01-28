@@ -1,0 +1,111 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- الفلتر الجانبي -->
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-sliders me-2"></i>تصفية النتائج</h5>
+                    
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">ترتيب حسب</label>
+                        <select class="form-select border-0 bg-light rounded-3">
+                            <option>الأكثر صلة (AI)</option>
+                            <option>الأحدث</option>
+                            <option>الأكثر شيوعاً</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted text-uppercase">نوع المصدر</label>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" checked>
+                                <label class="form-check-label small">كتب مطبوعة</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                                <label class="form-check-label small">رسائل ماجستير</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                                <label class="form-check-label small">دوريات علمية</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة النتائج -->
+        <div class="col-lg-9">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="fw-bold mb-0">
+                    نتائج البحث عن: <span class="text-primary position-relative d-inline-block">
+                        {{ query }}
+                        <svg class="position-absolute start-0 bottom-0 w-100" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="#4cc9f0" stroke-width="3" fill="none" opacity="0.5" />
+                        </svg>
+                    </span>
+                </h4>
+                <span class="badge bg-light text-dark border rounded-pill px-3">{{ results|length }} نتيجة</span>
+            </div>
+
+            {% if results %}
+                <div class="d-flex flex-column gap-3">
+                    {% for item in results %}
+                    <div class="card border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-0">
+                            <div class="row g-0 align-items-center">
+                                <!-- أيقونة/صورة -->
+                                <div class="col-md-1 bg-light d-flex align-items-center justify-content-center py-4 rounded-start">
+                                    <i class="bi bi-journal-text fs-2 text-primary opacity-50"></i>
+                                </div>
+                                
+                                <!-- المحتوى -->
+                                <div class="col-md-8 p-4">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <span class="badge bg-info bg-opacity-10 text-info rounded-1">كتاب</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1">
+                                        <a href="{% url 'library:book_detail' item.id %}" class="text-decoration-none text-dark stretched-link">{{ item.title }}</a>
+                                    </h5>
+                                    <p class="text-muted small mb-0">اضغط لعرض التفاصيل والموقع في الرف...</p>
+                                </div>
+
+                                <!-- نسبة المطابقة (Match Score) -->
+                                <div class="col-md-3 border-start p-4 text-center bg-light bg-opacity-25">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="position-relative d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px;">
+                                            <!-- دائرة خلفية -->
+                                            <svg class="w-100 h-100" viewBox="0 0 36 36">
+                                                <path class="text-secondary opacity-10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"/>
+                                                <path class="text-success" stroke-dasharray="{{ item.score|floatformat:2|add:'0' }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                                            </svg>
+                                            <span class="position-absolute small fw-bold text-success">{{ item.score|floatformat:1 }}</span>
+                                        </div>
+                                        <span class="small fw-bold text-muted">نسبة التطابق</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 card border-0 border-dashed border-2">
+                    <div class="mb-3">
+                        <div class="bg-light rounded-circle d-inline-flex p-4">
+                            <i class="bi bi-search fs-1 text-muted opacity-50"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold text-muted">لم نعثر على نتائج مطابقة</h5>
+                    <p class="text-muted small">حاول البحث بكلمات مختلفة أو تحقق من الإملاء.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

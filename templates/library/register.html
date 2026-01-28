@@ -1,0 +1,172 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <!-- بطاقة التسجيل -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                
+                <!-- رأس البطاقة -->
+                <div class="card-header text-white text-center py-4 border-0 position-relative"
+                     style="background: linear-gradient(135deg, #2b2d42 0%, #343a40 100%);">
+                    
+                    <div class="mb-2">
+                        <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex p-3">
+                            <i class="bi bi-mortarboard-fill fs-2 text-white"></i>
+                        </div>
+                    </div>
+                    
+                    <h3 class="fw-bold mb-0">حساب طالب جديد</h3>
+                    <p class="small text-white-50 mb-0">انضم إلينا وابدأ رحلتك البحثية في المكتبة الذكية</p>
+                    
+                    <!-- زخرفة خلفية -->
+                    <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                        <i class="bi bi-stars fs-1"></i>
+                    </div>
+                </div>
+
+                <!-- جسم البطاقة (النموذج) -->
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- عرض أخطاء النموذج العامة إن وجدت -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3 small">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <!-- المعلومات الشخصية -->
+                            <div class="col-12 mb-2">
+                                <h6 class="fw-bold text-primary border-bottom pb-2">
+                                    <i class="bi bi-person-lines-fill me-2"></i>المعلومات الشخصية
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">الاسم الأول</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">الكنية (اسم العائلة)</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">البريد الإلكتروني الجامعي</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- المعلومات الأكاديمية -->
+                            <div class="col-12 mt-4 mb-2">
+                                <h6 class="fw-bold text-primary border-bottom pb-2">
+                                    <i class="bi bi-book-half me-2"></i>البيانات الأكاديمية
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">الرقم الجامعي (Student ID)</label>
+                                {{ form.student_id }}
+                                {% if form.student_id.errors %}
+                                    <div class="text-danger small mt-1">{{ form.student_id.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">التخصص الدراسي</label>
+                                {{ form.major }}
+                                {% if form.major.errors %}
+                                    <div class="text-danger small mt-1">{{ form.major.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- بيانات الحساب -->
+                            <div class="col-12 mt-4 mb-2">
+                                <h6 class="fw-bold text-primary border-bottom pb-2">
+                                    <i class="bi bi-shield-lock me-2"></i>أمان الحساب
+                                </h6>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">اسم المستخدم (للدخول)</label>
+                                {{ form.username }}
+                                <div class="form-text small">استخدم أحرفاً إنجليزية وأرقاماً فقط.</div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">كلمة المرور</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">تأكيد كلمة المرور</label>
+                                {{ form.password_confirm }}
+                                {% if form.password_confirm.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password_confirm.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- زر التسجيل -->
+                        <div class="mt-5">
+                            <button type="submit" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm hover-up transition-all">
+                                <i class="bi bi-check-circle-fill me-2"></i> إنشاء الحساب
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- تذييل البطاقة -->
+                <div class="card-footer bg-light text-center py-3 border-0">
+                    <p class="mb-0 small text-muted">
+                        لديك حساب بالفعل؟ 
+                        <a href="{% url 'library:login' %}" class="text-dark fw-bold text-decoration-none">
+                            تسجيل الدخول
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">بالتسجيل أنت توافق على سياسة الاستخدام الخاصة بالمكتبة الجامعية.</small>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-up:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+    }
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #2b2d42;
+        box-shadow: 0 0 0 0.25rem rgba(43, 45, 66, 0.1);
+    }
+</style>
+{% endblock %}

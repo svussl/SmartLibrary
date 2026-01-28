@@ -1,0 +1,140 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- رأس الصفحة -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">لوحة التحليلات الذكية</h1>
+        <p class="lead text-muted">إحصائيات الأداء، سلوك الطلاب، وتحليل الفجوة المعرفية</p>
+        <hr class="w-25 mx-auto text-primary opacity-100">
+    </div>
+
+    <!-- شبكة البطاقات الإحصائية -->
+    <div class="row g-4">
+        
+        <!-- 1. تقرير أكثر الكتب استعارة (Most Borrowed) -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 rounded-3">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-graph-up-arrow me-2"></i> 
+                        📈 الأكثر استعارة
+                    </h5>
+                </div>
+                <div class="card-body bg-light">
+                    <p class="small text-muted mb-3">
+                        الكتب التي حققت أعلى معدل دوران (High Turnover) في المكتبة:
+                    </p>
+                    <ul class="list-group list-group-flush shadow-sm rounded">
+                        {% for item in most_borrowed %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold text-truncate" style="max-width: 70%;">
+                                📘 {{ item.book__title }}
+                            </span>
+                            <span class="badge bg-success rounded-pill">
+                                {{ item.total_borrows }} إعارة
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted py-4">
+                            لا توجد بيانات كافية حتى الآن
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-0 text-center small text-muted">
+                    يساعد هذا المؤشر في تحديد الكتب التي تحتاج لنسخ إضافية.
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. تقرير متوسط مدة الاستعارة (Average Duration) -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 rounded-3">
+                <div class="card-header bg-info text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-stopwatch me-2"></i>
+                        ⏱️ متوسط مدة القراءة
+                    </h5>
+                </div>
+                <div class="card-body bg-light">
+                    <p class="small text-muted mb-3">
+                        تحليل الفترة الزمنية لبقاء الكتاب عند الطالب (Retention Rate):
+                    </p>
+                    <ul class="list-group list-group-flush shadow-sm rounded">
+                        {% for item in avg_duration %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold text-truncate" style="max-width: 70%;">
+                                📗 {{ item.book__title }}
+                            </span>
+                            <span class="badge bg-info text-dark rounded-pill">
+                                {{ item.avg_days.days }} أيام
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted py-4">
+                            لم يتم إرجاع أي كتب بعد لحساب المتوسط
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-0 text-center small text-muted">
+                    المدة الطويلة قد تعني صعوبة المحتوى أو أهميته العالية.
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. تقرير تحليل الفجوة (Gap Analysis) - هام جداً للمشرف -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 rounded-3">
+                <div class="card-header bg-danger text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        ⚠️ تحليل الفجوة (Gap Analysis)
+                    </h5>
+                </div>
+                <div class="card-body bg-light">
+                    <p class="small text-muted mb-2">
+                        المواضيع التي بحث عنها الطلاب ولم يجدوا نتائج (Demand > Supply):
+                    </p>
+                    
+                    <!-- تنبيه للإدارة -->
+                    <div class="alert alert-warning border-warning p-2 mb-3 d-flex align-items-center" role="alert">
+                        <span class="fs-4 me-2">💡</span>
+                        <small class="fw-bold text-dark">توصية النظام: يرجى شراء مراجع في هذه المواضيع فوراً.</small>
+                    </div>
+
+                    <ul class="list-group list-group-flush shadow-sm rounded">
+                        {% for item in gap_analysis %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold text-danger text-truncate" style="max-width: 65%;">
+                                🔍 {{ item.query_text }}
+                            </span>
+                            <span class="badge bg-danger rounded-pill">
+                                {{ item.attempts }} محاولة بحث
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-success py-4">
+                            <i class="bi bi-check-circle-fill fs-3 d-block mb-2"></i>
+                            ممتاز! المخزون يغطي كافة طلبات البحث حالياً.
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-0 text-center small text-muted">
+                    هذا التقرير يدعم اتخاذ القرار في عمليات الشراء والتزويد.
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- زر العودة -->
+    <div class="text-center mt-5">
+        <a href="{% url 'library:home' %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+            <i class="bi bi-arrow-right me-2"></i> عودة للصفحة الرئيسية
+        </a>
+    </div>
+</div>
+{% endblock %}

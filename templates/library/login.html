@@ -1,0 +1,117 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- توسيط الكارت عمودياً وأفقياً -->
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-5 col-lg-4">
+            
+            <!-- بطاقة تسجيل الدخول -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                
+                <!-- رأس البطاقة (Header) -->
+                <div class="card-header text-white text-center py-5 border-0 position-relative" 
+                     style="background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);">
+                    
+                    <!-- أيقونة القفل -->
+                    <div class="mb-3">
+                        <div class="bg-white bg-opacity-25 rounded-circle d-inline-flex p-3 shadow-sm">
+                            <i class="bi bi-person-lock fs-1 text-white"></i>
+                        </div>
+                    </div>
+                    
+                    <h3 class="fw-bold mb-1">تسجيل الدخول</h3>
+                    <p class="small text-white-50 mb-0">المكتبة الذكية - بوابة الطالب والمشرف</p>
+
+                    <!-- زخرفة خلفية بسيطة -->
+                    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" 
+                         style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;">
+                    </div>
+                </div>
+
+                <!-- جسم البطاقة (Form Body) -->
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- حقل اسم المستخدم -->
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold">اسم المستخدم</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 rounded-start-pill ps-3 text-primary">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+                                <input type="text" name="username" 
+                                       class="form-control bg-light border-0 rounded-end-pill py-2 shadow-none" 
+                                       placeholder="أدخل اسم المستخدم" required autofocus>
+                            </div>
+                        </div>
+
+                        <!-- حقل كلمة المرور -->
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold">كلمة المرور</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 rounded-start-pill ps-3 text-primary">
+                                    <i class="bi bi-key-fill"></i>
+                                </span>
+                                <input type="password" name="password" 
+                                       class="form-control bg-light border-0 rounded-end-pill py-2 shadow-none" 
+                                       placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <!-- زر الدخول -->
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow hover-up transition-all mb-3">
+                            دخول آمن <i class="bi bi-box-arrow-in-left ms-2"></i>
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- تذييل البطاقة (Footer) -->
+                <div class="card-footer bg-light border-0 text-center py-3">
+                    <p class="mb-0 small text-muted">
+                        ليس لديك حساب؟ 
+                        <a href="{% url 'library:register' %}" class="fw-bold text-primary text-decoration-none">
+                            إنشاء حساب جديد
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- رابط العودة للرئيسية -->
+            <div class="text-center mt-4">
+                <a href="{% url 'library:home' %}" class="text-muted text-decoration-none small hover-underline">
+                    <i class="bi bi-arrow-right me-1"></i> العودة للصفحة الرئيسية كزائر
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* تأثيرات حركية بسيطة */
+    .hover-up:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4) !important;
+    }
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    .hover-underline:hover {
+        text-decoration: underline !important;
+        color: var(--primary-color) !important;
+    }
+    
+    /* تخصيص حقول الإدخال لتظهر بشكل عصري */
+    .form-control:focus {
+        background-color: #fff;
+        box-shadow: none; 
+    }
+    .input-group:focus-within {
+        box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        border-radius: 50px;
+    }
+</style>
+{% endblock %}

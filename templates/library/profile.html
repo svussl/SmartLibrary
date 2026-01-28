@@ -1,0 +1,125 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row g-4">
+        
+        <!-- العمود الجانبي: بطاقة الطالب -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                <div class="mb-3 position-relative d-inline-block">
+                    <!-- صورة رمزية -->
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        {{ user.first_name|slice:":1" }}
+                    </div>
+                    {% if user.is_superuser %}
+                    <span class="position-absolute bottom-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">مشرف</span>
+                    </span>
+                    {% else %}
+                    <span class="position-absolute bottom-0 start-100 translate-middle p-2 bg-success border border-light rounded-circle">
+                        <span class="visually-hidden">طالب</span>
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <h4 class="fw-bold mb-1">{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-muted mb-3">{{ user.email }}</p>
+
+                {% if student %}
+                    <div class="list-group list-group-flush text-start small mb-3">
+                        <div class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                            <span class="text-muted">الرقم الجامعي</span>
+                            <span class="fw-bold text-dark">{{ student.student_id }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                            <span class="text-muted">التخصص</span>
+                            <span class="fw-bold text-dark">{{ student.major }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent px-0">
+                            <span class="text-muted">تاريخ الانضمام</span>
+                            <span class="fw-bold text-dark">{{ user.date_joined|date:"Y/m/d" }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning small">
+                        حساب إداري (لا توجد بيانات طالب مرتبطة)
+                    </div>
+                {% endif %}
+
+                <a href="{% url 'library:logout' %}" class="btn btn-outline-danger w-100 rounded-pill">
+                    <i class="bi bi-box-arrow-right me-2"></i> تسجيل الخروج
+                </a>
+            </div>
+        </div>
+
+        <!-- العمود الرئيسي: سجل النشاط -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-journal-bookmark-fill text-primary me-2"></i>سجل الإعارات والنشاط</h5>
+                </div>
+                <div class="card-body">
+                    {% if borrowing_history %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>الكتاب</th>
+                                        <th>تاريخ الإعارة</th>
+                                        <th>تاريخ الإرجاع</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for trans in borrowing_history %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light p-2 rounded me-2">
+                                                    <i class="bi bi-book"></i>
+                                                </div>
+                                                <div>
+                                                    <a href="{% url 'library:book_detail' trans.book.id %}" class="text-decoration-none fw-bold text-dark">
+                                                        {{ trans.book.title }}
+                                                    </a>
+                                                    <div class="small text-muted">{{ trans.book.author }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ trans.borrow_date|date:"Y/m/d" }}</td>
+                                        <td>
+                                            {% if trans.return_date %}
+                                                {{ trans.return_date|date:"Y/m/d" }}
+                                            {% else %}
+                                                <span class="text-danger fw-bold">{{ trans.due_date|date:"Y/m/d" }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if trans.is_returned %}
+                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">تم الإرجاع</span>
+                                            {% else %}
+                                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">جارية</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3 text-muted opacity-50">
+                                <i class="bi bi-inbox fs-1"></i>
+                            </div>
+                            <h5>لا يوجد سجل إعارات حتى الآن</h5>
+                            <p class="text-muted small">ابدأ بالبحث عن الكتب واستعارتها لتظهر هنا.</p>
+                            <a href="{% url 'library:home' %}" class="btn btn-primary rounded-pill btn-sm">تصفح الكتب</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

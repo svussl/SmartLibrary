@@ -1,0 +1,161 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    
+    <!-- مسار التنقل (Breadcrumb) -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-white p-3 rounded shadow-sm border">
+            <li class="breadcrumb-item"><a href="{% url 'library:home' %}" class="text-decoration-none fw-bold">الرئيسية</a></li>
+            <li class="breadcrumb-item active text-muted" aria-current="page">{{ book.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- العمود الأيمن: غلاف الكتاب وإجراءات الاستعارة -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden sticky-top" style="top: 100px;">
+                <!-- صورة الغلاف -->
+                <div class="position-relative" style="height: 400px;">
+                    {% if book.cover_image_url %}
+                        <img src="{{ book.cover_image_url }}" class="w-100 h-100 object-fit-cover" alt="{{ book.title }}">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white bg-dark p-4 text-center"
+                             style="background: linear-gradient(135deg, #2b2d42 0%, #8d99ae 100%);">
+                            <i class="bi bi-book-half display-1 mb-3 opacity-50"></i>
+                            <h4 class="fw-bold">{{ book.title }}</h4>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- شارة التوفر -->
+                    <div class="position-absolute top-0 start-0 w-100 p-3 bg-gradient-dark text-white d-flex justify-content-between align-items-center bg-opacity-75">
+                         <span class="badge bg-light text-dark rounded-pill fw-bold">
+                            <i class="bi bi-star-fill text-warning me-1"></i> 4.8 تقييم
+                         </span>
+                         {% if book.available_copies > 0 %}
+                            <span class="badge bg-success rounded-pill">متاح للاستعارة</span>
+                         {% else %}
+                            <span class="badge bg-danger rounded-pill">غير متاح حالياً</span>
+                         {% endif %}
+                    </div>
+                </div>
+
+                <!-- أزرار الإجراءات -->
+                <div class="card-body p-4 text-center">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <small class="d-block text-muted">النسخ الكلية</small>
+                                <span class="fw-bold fs-5">{{ book.total_copies }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2 bg-light">
+                                <small class="d-block text-muted">المتاح الآن</small>
+                                <span class="fw-bold fs-5 text-success">{{ book.available_copies }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if book.available_copies > 0 %}
+                        <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2">
+                            <i class="bi bi-bag-plus-fill me-2"></i> طلب استعارة الكتاب
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2" disabled>
+                            <i class="bi bi-clock-history me-2"></i> حجز عند التوفر
+                        </button>
+                    {% endif %}
+                    <small class="text-muted d-block mt-2">سيتم حجز الكتاب لمدة 24 ساعة فقط</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- العمود الأيسر: التفاصيل والتحليل الذكي -->
+        <div class="col-lg-8">
+            <div class="mb-5">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-10">
+                        {{ book.category }}
+                    </span>
+                    <span class="text-muted small">|</span>
+                    <span class="text-muted small">ISBN: {{ book.isbn }}</span>
+                </div>
+                
+                <h1 class="display-5 fw-bold text-dark mb-2">{{ book.title }}</h1>
+                <h4 class="text-muted mb-4 fw-normal"><i class="bi bi-pen me-2"></i>{{ book.author }}</h4>
+                
+                <div class="card bg-light border-0 rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-file-text me-2 text-primary"></i>نبذة عن الكتاب</h5>
+                    <p class="lead fs-6 text-secondary mb-0" style="line-height: 1.8;">
+                        {{ book.description }}
+                    </p>
+                </div>
+
+                <!-- التحليل الذكي (AI Tags) -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center">
+                        <i class="bi bi-cpu me-2 text-primary"></i>
+                        تحليل الذكاء الاصطناعي للمحتوى
+                    </h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in book.tags.split %}
+                            <a href="{% url 'library:search' %}?q={{ tag }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 bg-white border">
+                                # {{ tag }}
+                            </a>
+                        {% empty %}
+                            <span class="text-muted small">لم يتم استخراج وسوم لهذا الكتاب.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم التوصيات (Similar Books) -->
+            <hr class="my-5 border-secondary opacity-25">
+            
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h3 class="fw-bold m-0"><i class="bi bi-magic me-2 text-primary"></i>كتب مشابهة (AI Recommendations)</h3>
+                <span class="badge bg-light text-dark border">Content-Based Filtering</span>
+            </div>
+
+            <div class="row g-4">
+                {% for similar in similar_books %}
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all flex-row overflow-hidden">
+                        <!-- صورة مصغرة -->
+                        <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="width: 100px; min-height: 100%;">
+                            <i class="bi bi-book fs-3"></i>
+                        </div>
+                        
+                        <div class="card-body py-3">
+                            <h6 class="fw-bold mb-1 text-truncate">
+                                <a href="{% url 'library:book_detail' similar.id %}" class="text-decoration-none text-dark stretched-link">
+                                    {{ similar.title }}
+                                </a>
+                            </h6>
+                            <p class="text-muted small mb-2">{{ similar.author }}</p>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill small">طابق بنسبة عالية</span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-4 bg-light rounded-3">
+                    <p class="text-muted mb-0">لم يجد الذكاء الاصطناعي كتباً مشابهة في الوقت الحالي.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
